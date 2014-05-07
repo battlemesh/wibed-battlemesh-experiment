@@ -1,0 +1,14 @@
+#!/bin/sh
+PROTOS="/etc/wbm/protos"
+proto="$1"
+action="$2"
+
+[ -z "$action" ] && {
+	echo "Use: $0 <protocol> <action>"
+	echo "    protocols: all $(cd $PROTOS && ls *.sh | cut -d. -f1 | tr '\n' ' ')"
+	echo "    actions: start stop"
+} || [ "$proto" == "all" ] && {
+	for p in $PROTOS/*.sh; do 
+		sh $p $action 
+	done
+} || $PROTOS/${proto}.sh $action
