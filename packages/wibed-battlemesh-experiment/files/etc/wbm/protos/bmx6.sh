@@ -94,14 +94,12 @@ add () {
 }
 
 stop () {
-  killall bmx6
-  sleep 2
-  killall -9 bmx6
+  /etc/init.d/bmx6 stop
+  killall -9 bmx6 2>/dev/null
 }
 
 start () {
-  stop
-  bmx6
+  /etc/init.d/bmx6 start
 }
 
 $ACTION

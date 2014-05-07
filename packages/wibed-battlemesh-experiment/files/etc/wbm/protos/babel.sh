@@ -44,4 +44,13 @@ add () {
   uci commit babeld
 }
 
+start () {
+	/etc/init.d/babeld start
+}
+
+stop () {
+	/etc/init.d/babeld stop
+	killall -9 babeld 2>/dev/null
+}
+
 $ACTION

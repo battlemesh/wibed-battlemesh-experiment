@@ -177,4 +177,13 @@ add() {
   uci commit olsrd
 }
 
+start () {
+    /etc/init.d/olsrd start
+}
+
+stop () {
+    /etc/init.d/olsrd stop
+    killall -9 olsrd 2>/dev/null
+}
+
 $ACTION
