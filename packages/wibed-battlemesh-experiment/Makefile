@@ -37,11 +37,11 @@ define Package/wibed-battlemesh-experiment
 	+bmx6 +bmx6-uci-config +olsrd +kmod-batman-adv +babeld
 endef
 
-define Package/wbm-testbed/description
+define Package/wibed-battlemesh-experiment/description
  Required addons for Wireless Battle of the Mesh WiBed experiment
 endef
 
-define Package/wbm-testbed/conffiles
+define Package/wibed-battlemesh-experiment/conffiles
  /etc/config/wbm
 endef
 
@@ -55,7 +55,7 @@ endef
 define Build/Compile
 endef
 
-define Package/wbm-testbed/install
+define Package/wibed-battlemesh-experiment/install
 	$(CP) ./files/* $(1)/
 	chmod 755 $(1)/usr/bin/wbm-config
 	chmod 755 $(1)/etc/wbm/protos/*.sh
