@@ -1,0 +1,31 @@
+config wbm network
+	# primary network device to get the MAC addres
+	option primary_dev eth0
+
+	# first vlan tag for first protocol
+	option vlan_tag_start 10
+
+	# protocols available
+	list protos olsr
+	list protos bmx6
+	list protos batadv
+	list protos babel
+
+	# enable o11s and disable all other protocols on these wifi interfaces
+	option o11s_ifs ""
+
+	# ipv4_net and ipv6_net are the networks that each node will use for its own.
+	# P = protocol identifier (0,1,2...) + 10 for interface
+	# R1 = 8 bits random number, probably comming from MAC
+	# R2 = 8 bits random number, probably comming from MAC
+	option ipv4_net 10.P.R1.R2/16
+	option ipv6_net fdba:P:R1R2::1/64
+	option mac_net 02:ba:P:R1:R2:01
+
+config wbm wireless
+	option iface radio1
+	option ssid WBMv6
+	option bssid 02:ca:ff:ee:ba:be
+	option mcast_rate 6000
+	list channel_2ghz 1
+	list channel_5ghz 40+

@@ -42,6 +42,7 @@ define Package/wbm-testbed/description
 endef
 
 define Package/wbm-testbed/conffiles
+ /etc/config/wbm
 endef
 
 define Build/Prepare
