@@ -27,10 +27,10 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/wibed-wbm-exp
+define Package/wibed-battlemesh-experiment
   SECTION:=net
-  CATEGORY:=WBM
-  TITLE:=Addons for wibed battlemesh experiment
+  CATEGORY:=WiBed
+  TITLE:=Addons for WiBed battlemesh experiment
   URL:=http://battlemesh.org
   DEPENDS:= \
 	+ip +mtr +iputils-ping6 \
@@ -57,9 +57,9 @@ endef
 
 define Package/wbm-testbed/install
 	$(CP) ./files/* $(1)/
-	chmod 755 $(1)/usr/bin/wbm-manage
+	chmod 755 $(1)/usr/bin/wbm-config
 	chmod 755 $(1)/etc/wbm/protos/*.sh
 endef
 
-$(eval $(call BuildPackage,wibed-wbm-exp))
+$(eval $(call BuildPackage,wibed-battlemesh-experiment))
 
