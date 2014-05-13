@@ -60,6 +60,7 @@ define Package/wibed-battlemesh-experiment/install
 	$(CP) ./files/* $(1)/
 	chmod 755 $(1)/usr/bin/wbm-config
 	chmod 755 $(1)/usr/bin/wbm-manage
+	chmod 755 $(1)/usr/bin/wbm-test
 	chmod 755 $(1)/etc/wbm/protos/*.sh
 endef
 
