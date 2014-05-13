@@ -10,8 +10,10 @@ local x = uci:cursor()
 local function node_id()
 	local dev = assert(x:get("wbm", "network", "primary_dev"))
 	local mac = assert(fs.readfile("/sys/class/net/"..dev.."/address"))
-	local hash = crc.hash(mac)
-	return math.floor(hash / 256), hash % 256
+	local function hex(x) return string.format("%02x", x) end
+	local r1 = string.sub(mac, 13, 14)
+	local r2 = string.sub(mac, 16, 17)
+	return tonumber(r1,16),tonumber(r2,16)
 end
 
 local function generate_address(p, n)
