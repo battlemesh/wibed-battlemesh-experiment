@@ -37,7 +37,7 @@ prepare() {
 }
 
 add() {
-    echo  >> /etc/olsrd2.conf "[interface=${1}]"
+    echo  >> /etc/olsrd2.conf "[interface=${REAL_INTERFACE}]"
 }
 
 start () {
