@@ -10,6 +10,7 @@ config wbm network
 	list protos bmx6
 	list protos batadv
 	list protos babel
+	list protos olsr2
 
 	# enable o11s and disable all other protocols on these wifi interfaces
 	option o11s_ifs ""
