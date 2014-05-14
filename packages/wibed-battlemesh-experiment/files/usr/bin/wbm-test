@@ -4,8 +4,7 @@ set -x
 
 DSTNAMEID=${1:-f9fa}
 
-#PROTOS=${2:-olsr1_bmx_bat_babel}
-PROTOS=${2:-olsr1_bmx}
+PROTOS=${2:-olsr1_bmx_bat_babel_olsr2}
 OLSR1=$(echo $PROTOS | grep olsr1)
 BMX=$(echo $PROTOS | grep bmx)
 BAT=$(echo $PROTOS | grep bat)
