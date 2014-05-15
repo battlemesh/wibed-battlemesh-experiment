@@ -1,10 +1,17 @@
 #!/bin/sh
 
+SRCNAMEID=${1:-$(cat /proc/sys/kernel/hostname | grep -o "....$")}
+HOSTNAMEID=$(cat /proc/sys/kernel/hostname | grep -o "....$")
+
+[ "$SRCNAMEID" == "$HOSTNAMEID" ] || exit
+
 set -x
 
-DSTNAMEID=${1:-f9fa}
+shift
+DSTNAMEID=${1:-4174}
 
-PROTOS=${2:-olsr1_bmx_bat_babel_olsr2}
+shift
+PROTOS=${1:-olsr1_bmx_bat_babel_olsr2}
 OLSR1=$(echo $PROTOS | grep olsr1)
 BMX=$(echo $PROTOS | grep bmx)
 BAT=$(echo $PROTOS | grep bat)
@@ -12,8 +19,11 @@ BABEL=$(echo $PROTOS | grep babel)
 OLSR2=$(echo $PROTOS | grep olsr2)
 PROTOCOLS_NUM=$((( $([ "$OLSR1" ] && echo 1 || echo 0) + $([ "$BMX" ] && echo 1 || echo 0) + $([ "$BAT" ] && echo 1 || echo 0) + $([ "$BABEL" ] && echo 1 || echo 0) + $([ "$OLSR2" ] && echo 1 || echo 0) )))
 
-OUTDIR=${3:-/save/wbm-axn}
-DURATION=${4:-20}
+shift
+OUTDIR=${1:-/save/wbm-axn}
+
+shift
+DURATION=${1:-200}
 TCPDUMP_CAPTURE_SIZE=${5:-100}
 TCPDUMP_CAPTURE_DEV=${5:-wbm1}
 
@@ -29,37 +39,40 @@ BAT_V6="fdbb::$DSTADDRID"
 BABEL_V6="fdba:14:$DSTADDRID::1"
 OLSR2_V6="fdba:15:$DSTADDRID::1"
 
-
 mkdir -p $OUTDIR
 rm -f $OUTDIR/*
 
-echo starting top...
+echo Starting top...
 timeout $DURATION top -b -d1 >> $OUTDIR/top.log &
 
 
-echo starting tcpdump...
+echo Starting tcpdump...
 timeout $DURATION tcpdump -nve -i $TCPDUMP_CAPTURE_DEV -s $TCPDUMP_CAPTURE_SIZE -w $OUTDIR/tcpdump.raw port 6240 or port 698 or port 269 or port 6696 or \(ether proto 0x4305 and \( ether[14]==0x00 or ether[14]==0x44 \) \) 2>/dev/null &
 
-echo starting pings...
-[ $OLSR1 ] && timeout $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR1_V6 >> $OUTDIR/ping6-olsr1.log  2>&1 && break || sleep 1; done" &
-[ $BMX ]   && timeout $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BMX_V6   >> $OUTDIR/ping6-bmx.log    2>&1 && break || sleep 1; done" &
-[ $BAT ]   && timeout $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BAT_V6   >> $OUTDIR/ping6-batadv.log 2>&1 && break || sleep 1; done" &
-[ $BABEL ] && timeout $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BABEL_V6 >> $OUTDIR/ping6-babel.log  2>&1 && break || sleep 1; done" &
-[ $OLSR2 ] && timeout $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR2_V6 >> $OUTDIR/ping6-olsr2.log  2>&1 && break || sleep 1; done" &
+echo Starting pings...
+[ $OLSR1 ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR1_V6 >> $OUTDIR/ping6-olsr1.log  2>&1 && break || sleep 1; done" &
+[ $BMX ]   && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BMX_V6   >> $OUTDIR/ping6-bmx.log    2>&1 && break || sleep 1; done" &
+[ $BAT ]   && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BAT_V6   >> $OUTDIR/ping6-batadv.log 2>&1 && break || sleep 1; done" &
+[ $BABEL ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BABEL_V6 >> $OUTDIR/ping6-babel.log  2>&1 && break || sleep 1; done" &
+[ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR2_V6 >> $OUTDIR/ping6-olsr2.log  2>&1 && break || sleep 1; done" &
 
-echo starting netperfs...
+echo Starting netperfs...
 NETPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $NETPERF_DURATION )))
 NETPERF_COUNT=1
 while [ $NETPERF_COUNT -le $NETPERF_ROUNDS ]; do
 
-    [ $OLSR1 ] && timeout $NETPERF_DURATION netperf -f k -c -C -D 1 -j -l $((( $NETPERF_DURATION - 1 ))) -H $OLSR1_V6 > $OUTDIR/netperf-olsr1-$NETPERF_COUNT.log
-    [ $BMX ]   && timeout $NETPERF_DURATION netperf -f k -c -C -D 1 -j -l $((( $NETPERF_DURATION - 1 ))) -H $BMX_V6   > $OUTDIR/netperf-bmx-$NETPERF_COUNT.log
-    [ $BAT ]   && timeout $NETPERF_DURATION netperf -f k -c -C -D 1 -j -l $((( $NETPERF_DURATION - 1 ))) -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
-    [ $BABEL ] && timeout $NETPERF_DURATION netperf -f k -c -C -D 1 -j -l $((( $NETPERF_DURATION - 1 ))) -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
-    [ $OLSR2 ] && timeout $NETPERF_DURATION netperf -f k -c -C -D 1 -j -l $((( $NETPERF_DURATION - 1 ))) -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
+    [ $OLSR1 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR1_V6 > $OUTDIR/netperf-olsr1-$NETPERF_COUNT.log
+    [ $BMX ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BMX_V6   > $OUTDIR/netperf-bmx-$NETPERF_COUNT.log
+    [ $BAT ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
+    [ $BABEL ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
+    [ $OLSR2 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
 
     NETPERF_COUNT=$((( $NETPERF_COUNT + 1 )));
 done
 
 
 set +x
+
+wait
+
+echo Finished!
