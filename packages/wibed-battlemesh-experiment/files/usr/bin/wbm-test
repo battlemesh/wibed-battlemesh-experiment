@@ -12,13 +12,14 @@ shift
 NETPERF=${1:-YES}
 
 shift
-PROTOS=${1:-olsr1_bmx_bat_babel_olsr2}
+PROTOS=${1:-olsr1_bmx_bat_babel_olsr2_cjdns}
 OLSR1=$(echo $PROTOS | grep olsr1)
 BMX=$(echo $PROTOS | grep bmx)
 BAT=$(echo $PROTOS | grep bat)
 BABEL=$(echo $PROTOS | grep babel)
 OLSR2=$(echo $PROTOS | grep olsr2)
-PROTOCOLS_NUM=$((( $([ "$OLSR1" ] && echo 1 || echo 0) + $([ "$BMX" ] && echo 1 || echo 0) + $([ "$BAT" ] && echo 1 || echo 0) + $([ "$BABEL" ] && echo 1 || echo 0) + $([ "$OLSR2" ] && echo 1 || echo 0) )))
+CJDNS=$(echo $PROTOS | grep cjdns)
+PROTOCOLS_NUM=$((( $([ "$OLSR1" ] && echo 1 || echo 0) + $([ "$BMX" ] && echo 1 || echo 0) + $([ "$BAT" ] && echo 1 || echo 0) + $([ "$BABEL" ] && echo 1 || echo 0) + $([ "$OLSR2" ] && echo 1 || echo 0) + $([ "$CJDNS" ] && echo 1 || echo 0) )))
 
 shift
 OUTDIR=${1:-/save/wbm-axn}
@@ -33,12 +34,14 @@ PING6_SIZE="400"
 
 NETPERF_DURATION="10"
 
-DSTADDRID=$DSTNAMEID #$(bmx6 -c originators | grep "wibed-..$DSTNAMEID" | awk '{print $3}' | awk -F: '{print $3}' )
+DSTADDRID="fc06:c135:28a5:8c0b:dd4e:bcb6:d4d6:c96d" #$DSTNAMEID #$(bmx6 -c originators | grep "wibed-..$DSTNAMEID" | awk '{print $3}' | awk -F: '{print $3}' )
 OLSR1_V6="fdba:11:$DSTADDRID::1"
 BMX_V6="fdba:12:$DSTADDRID::1"
 BAT_V6="fdbb::$DSTADDRID"
 BABEL_V6="fdba:14:$DSTADDRID::1"
 OLSR2_V6="fdba:15:$DSTADDRID::1"
+# TODO that's not actually the destination address
+CJDNS_V6=$(uci get network.lan_cjdns.ipv6)
 
 mkdir -p $OUTDIR
 rm -f $OUTDIR/*
@@ -64,6 +67,7 @@ echo Starting pings...
 [ $BAT ]   && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BAT_V6   >> $OUTDIR/ping6-batadv.log 2>&1 && break || sleep 1; done" &
 [ $BABEL ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BABEL_V6 >> $OUTDIR/ping6-babel.log  2>&1 && break || sleep 1; done" &
 [ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR2_V6 >> $OUTDIR/ping6-olsr2.log  2>&1 && break || sleep 1; done" &
+[ $CJDNS ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $CJDNS_V6 >> $OUTDIR/ping6-cjdns.log  2>&1 && break || sleep 1; done" &
 
 echo Starting mtr...
 [ $OLSR1 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR1_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr1.log &
@@ -71,7 +75,7 @@ echo Starting mtr...
 [ $BAT ]   && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $BAT_V6;    sleep 1; done" >> $OUTDIR/mtr-batadv.log &
 [ $BABEL ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $BABEL_V6;  sleep 1; done" >> $OUTDIR/mtr-babel.log &
 [ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR2_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr2.log &
-
+[ $CJDNS ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $CJDNS_V6;  sleep 1; done" >> $OUTDIR/mtr-cjdns.log &
 
 if [ "$NETPERF" == "YES" ]; then
     echo Starting netperfs...
@@ -84,6 +88,7 @@ if [ "$NETPERF" == "YES" ]; then
 	[ $BAT ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
 	[ $BABEL ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
 	[ $OLSR2 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
+	[ $CJDNS ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $CJDNS_V6 > $OUTDIR/netperf-cjdns-$NETPERF_COUNT.log
 
 	NETPERF_COUNT=$((( $NETPERF_COUNT + 1 )));
     done
@@ -100,6 +105,4 @@ ip -6 route         | tee $OUTDIR/ip6routes-end.log
 ip -6 route ls t 60 | tee $OUTDIR/ip6routes60-end.log
 ip addr             | tee $OUTDIR/ipaddr-end.log
 
-
 echo Finished!
-
