@@ -42,6 +42,14 @@ OLSR2_V6="fdba:15:$DSTADDRID::1"
 mkdir -p $OUTDIR
 rm -f $OUTDIR/*
 
+
+ps                  | tee $OUTDIR/ps-begin.log
+bmx6 -c status interfaces links originators tunnels | tee $OUTDIR/bmx-cd8-begin.log
+ip -4 route         | tee $OUTDIR/ip4routes-begin.log
+ip -6 route         | tee $OUTDIR/ip6routes-begin.log
+ip -6 route ls t 60 | tee $OUTDIR/ip6routes60-begin.log
+ip addr             | tee $OUTDIR/ipaddr-begin.log
+
 echo Starting top...
 timeout $DURATION top -b -d1 >> $OUTDIR/top.log &
 
@@ -55,6 +63,14 @@ echo Starting pings...
 [ $BAT ]   && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BAT_V6   >> $OUTDIR/ping6-batadv.log 2>&1 && break || sleep 1; done" &
 [ $BABEL ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $BABEL_V6 >> $OUTDIR/ping6-babel.log  2>&1 && break || sleep 1; done" &
 [ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do ping6 -i $PING6_INTERVAL -s $PING6_SIZE -n $OLSR2_V6 >> $OUTDIR/ping6-olsr2.log  2>&1 && break || sleep 1; done" &
+
+echo Starting mtr...
+[ $OLSR1 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR1_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr1.log &
+[ $BMX ]   && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $BMX_V6;    sleep 1; done" >> $OUTDIR/mtr-bmx.log &
+[ $BAT ]   && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $BAT_V6;    sleep 1; done" >> $OUTDIR/mtr-batadv.log &
+[ $BABEL ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $BABEL_V6;  sleep 1; done" >> $OUTDIR/mtr-babel.log &
+[ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR2_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr2.log &
+
 
 echo Starting netperfs...
 NETPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $NETPERF_DURATION )))
@@ -74,5 +90,13 @@ done
 set +x
 
 wait
+
+ps                  | tee $OUTDIR/ps-end.log
+bmx6 -c status interfaces links originators tunnels | tee $OUTDIR/bmx-cd8-end.log
+ip -4 route         | tee $OUTDIR/ip4routes-end.log
+ip -6 route         | tee $OUTDIR/ip6routes-end.log
+ip -6 route ls t 60 | tee $OUTDIR/ip6routes60-end.log
+ip addr             | tee $OUTDIR/ipaddr-end.log
+
 
 echo Finished!
