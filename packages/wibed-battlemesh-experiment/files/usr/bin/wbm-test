@@ -2,13 +2,14 @@
 
 SRCNAMEID=${1:-$(cat /proc/sys/kernel/hostname | grep -o "....$")}
 HOSTNAMEID=$(cat /proc/sys/kernel/hostname | grep -o "....$")
-
 [ "$SRCNAMEID" == "$HOSTNAMEID" ] || exit
-
 set -x
 
 shift
 DSTNAMEID=${1:-4174}
+
+shift
+NETPERF=${1:-YES}
 
 shift
 PROTOS=${1:-olsr1_bmx_bat_babel_olsr2}
@@ -72,20 +73,21 @@ echo Starting mtr...
 [ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR2_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr2.log &
 
 
-echo Starting netperfs...
-NETPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $NETPERF_DURATION )))
-NETPERF_COUNT=1
-while [ $NETPERF_COUNT -le $NETPERF_ROUNDS ]; do
+if [ "$NETPERF" == "YES" ]; then
+    echo Starting netperfs...
+    NETPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $NETPERF_DURATION )))
+    NETPERF_COUNT=1
+    while [ $NETPERF_COUNT -le $NETPERF_ROUNDS ]; do
 
-    [ $OLSR1 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR1_V6 > $OUTDIR/netperf-olsr1-$NETPERF_COUNT.log
-    [ $BMX ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BMX_V6   > $OUTDIR/netperf-bmx-$NETPERF_COUNT.log
-    [ $BAT ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
-    [ $BABEL ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
-    [ $OLSR2 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
+	[ $OLSR1 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR1_V6 > $OUTDIR/netperf-olsr1-$NETPERF_COUNT.log
+	[ $BMX ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BMX_V6   > $OUTDIR/netperf-bmx-$NETPERF_COUNT.log
+	[ $BAT ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
+	[ $BABEL ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
+	[ $OLSR2 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
 
-    NETPERF_COUNT=$((( $NETPERF_COUNT + 1 )));
-done
-
+	NETPERF_COUNT=$((( $NETPERF_COUNT + 1 )));
+    done
+fi
 
 set +x
 
