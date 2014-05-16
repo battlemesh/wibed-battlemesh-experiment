@@ -102,3 +102,4 @@ ip addr             | tee $OUTDIR/ipaddr-end.log
 
 
 echo Finished!
+
