@@ -9,7 +9,7 @@ shift
 DSTNAMEID=${1:-4174}
 
 shift
-NETPERF=${1:-YES}
+IPERF=${1:-YES}
 
 shift
 PROTOS=${1:-olsr1_bmx_bat_babel_olsr2}
@@ -31,7 +31,7 @@ TCPDUMP_CAPTURE_DEV=${5:-wbm1}
 PING6_INTERVAL="1"
 PING6_SIZE="400"
 
-NETPERF_DURATION="10"
+IPERF_DURATION="10"
 
 DSTADDRID=$DSTNAMEID #$(bmx6 -c originators | grep "wibed-..$DSTNAMEID" | awk '{print $3}' | awk -F: '{print $3}' )
 OLSR1_V6="fdba:11:$DSTADDRID::1"
@@ -73,19 +73,19 @@ echo Starting mtr...
 [ $OLSR2 ] && timeout --signal=INT $DURATION sh -c "while true; do date +%s.%N; mtr -nt -6 -r -c 1 $OLSR2_V6;  sleep 1; done" >> $OUTDIR/mtr-olsr2.log &
 
 
-if [ "$NETPERF" == "YES" ]; then
-    echo Starting netperfs...
-    NETPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $NETPERF_DURATION )))
-    NETPERF_COUNT=1
-    while [ $NETPERF_COUNT -le $NETPERF_ROUNDS ]; do
+if [ "$IPERF" == "YES" ]; then
+    echo Starting iperfs...
+    IPERF_ROUNDS=$((( $DURATION / $PROTOCOLS_NUM / $IPERF_DURATION )))
+    IPERF_COUNT=1
+    while [ $IPERF_COUNT -le $IPERF_ROUNDS ]; do
 
-	[ $OLSR1 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR1_V6 > $OUTDIR/netperf-olsr1-$NETPERF_COUNT.log
-	[ $BMX ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BMX_V6   > $OUTDIR/netperf-bmx-$NETPERF_COUNT.log
-	[ $BAT ]   && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/netperf-batadv-$NETPERF_COUNT.log
-	[ $BABEL ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/netperf-babel-$NETPERF_COUNT.log
-	[ $OLSR2 ] && timeout --signal=INT $NETPERF_DURATION netperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/netperf-olsr2-$NETPERF_COUNT.log
+	[ $OLSR1 ] && timeout --signal=INT $IPERF_DURATION iperf -f k -c -C -D 1 -j -H $OLSR1_V6 > $OUTDIR/iperf-olsr1-$IPERF_COUNT.log
+	[ $BMX ]   && timeout --signal=INT $IPERF_DURATION iperf -f k -c -C -D 1 -j -H $BMX_V6   > $OUTDIR/iperf-bmx-$IPERF_COUNT.log
+	[ $BAT ]   && timeout --signal=INT $IPERF_DURATION iperf -f k -c -C -D 1 -j -H $BAT_V6   > $OUTDIR/iperf-batadv-$IPERF_COUNT.log
+	[ $BABEL ] && timeout --signal=INT $IPERF_DURATION iperf -f k -c -C -D 1 -j -H $BABEL_V6 > $OUTDIR/iperf-babel-$IPERF_COUNT.log
+	[ $OLSR2 ] && timeout --signal=INT $IPERF_DURATION iperf -f k -c -C -D 1 -j -H $OLSR2_V6 > $OUTDIR/iperf-olsr2-$IPERF_COUNT.log
 
-	NETPERF_COUNT=$((( $NETPERF_COUNT + 1 )));
+	IPERF_COUNT=$((( $IPERF_COUNT + 1 )));
     done
 fi
 
