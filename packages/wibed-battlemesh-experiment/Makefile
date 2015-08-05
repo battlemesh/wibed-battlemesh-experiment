@@ -34,8 +34,8 @@ define Package/wibed-battlemesh-experiment
   URL:=http://battlemesh.org
   DEPENDS:= \
 	+ip +mtr +iputils-ping6 \
-	+bmx6 +bmx6-uci-config +olsrd +kmod-batman-adv +babeld \
-	+netperf +tcpdump +iputils-ping +iputils-tracepath +iputils-tracepath6 +iputils-traceroute6
+	+bmx6 +bmx6-uci-config +olsrd +oonf-olsrd2-git +kmod-batman-adv +babeld \
+	+iperf3 +tcpdump +iputils-ping +ip +iputils-tracepath +iputils-tracepath6 +iputils-traceroute6
 endef
 
 define Package/wibed-battlemesh-experiment/description
