@@ -32,11 +32,19 @@ define Package/wibed-battlemesh-experiment
   CATEGORY:=WiBed
   TITLE:=Addons for WiBed battlemesh experiment
   URL:=http://battlemesh.org
+
   DEPENDS:= \
 	+ip +mtr +iputils-ping6 \
-	+bmx6 +bmx6-uci-config +olsrd +kmod-batman-adv +babeld +cjdns \
-	+netperf +tcpdump +iputils-ping +iputils-tracepath +iputils-tracepath6 +iputils-traceroute6 \
-	+gnunet +gnunet-vpn +gnunet-gns
+	+netperf +iperf3 +tcpdump +iputils-ping \
+	+iputils-tracepath +iputils-tracepath6 \
+	+iputils-traceroute6 \
+	+bmx7 +bmx7-uci-config \
+	+olsrd +oonf-olsrd2 \
+	+kmod-batman-adv +batctl \
+	+babeld \
+	+gnunet +gnunet-vpn +gnunet-gns \
+	+cjdns \
+
 endef
 
 define Package/wibed-battlemesh-experiment/description
@@ -66,4 +74,3 @@ define Package/wibed-battlemesh-experiment/install
 endef
 
 $(eval $(call BuildPackage,wibed-battlemesh-experiment))
-
