@@ -35,7 +35,8 @@ define Package/wibed-battlemesh-experiment
   DEPENDS:= \
 	+ip +mtr +iputils-ping6 \
 	+bmx6 +bmx6-uci-config +olsrd +kmod-batman-adv +babeld +cjdns \
-	+netperf +tcpdump +iputils-ping +iputils-tracepath +iputils-tracepath6 +iputils-traceroute6
+	+netperf +tcpdump +iputils-ping +iputils-tracepath +iputils-tracepath6 +iputils-traceroute6 \
+	+gnunet +gnunet-vpn +gnunet-gns
 endef
 
 define Package/wibed-battlemesh-experiment/description
