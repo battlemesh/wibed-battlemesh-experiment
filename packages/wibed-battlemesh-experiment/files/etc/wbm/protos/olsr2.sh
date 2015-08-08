@@ -28,16 +28,35 @@ store_neigh_stats()
 }
 
 prepare() {
-    echo >  /etc/olsrd2.conf "[ff_dat_metric]"
-    echo >> /etc/olsrd2.conf "    raw_filename   /save/olsrd2_metricdata.txt"
-    echo >> /etc/olsrd2.conf "    raw_maxpackets 50000"
-    echo >> /etc/olsrd2.conf "    raw_maxtime    3600"
-    echo >> /etc/olsrd2.conf "    raw_start      true"
-    echo >> /etc/olsrd2.conf ""
+  uci revert olsrd2
+  rm /etc/config/olsrd2
+  touch /etc/config/olsrd2
+
+  uci -q add olsrd2 global
+  uci set olsrd2.@global[-1]=global
+  uci set olsrd2.@global[-1].pidfile='/var/run/olsrd2.pid'
+  uci set olsrd2.@global[-1].lockfile='/var/lock/olsrd2'
+
+  uci -q add olsrd2 log
+  uci set olsrd2.@log[-1]=log
+  uci set olsrd2.@log[-1].syslog='true'
+  uci set olsrd2.@log[-1].stderr='true'
+
+  uci commit olsrd2
+
 }
 
 add() {
-    echo  >> /etc/olsrd2.conf "[interface=${REAL_INTERFACE}]"
+  uci -q add olsrd2 interface
+  uci set olsrd2.@interface[-1]=interface
+  uci set olsrd2.@interface[-1].ifname=${LOGICAL_INTERFACE}
+
+  uci -q add olsrd2 interface
+  uci set olsrd2.@interface[1]=interface
+  uci set olsrd2.@interface[1].ifname='wan' 'lan'
+  uci set olsrd2.@interface[1].rx_bitrate='100M'
+
+  uci commit olsrd2
 }
 
 start () {
