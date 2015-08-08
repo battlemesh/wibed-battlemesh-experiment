@@ -129,7 +129,6 @@ prepare() {
 
   uci -q add olsrd olsrd
   uci set olsrd.@olsrd[-1].IpVersion=6
-  uci set olsrd.@olsrd[-1].LinkQualityAlgorithm=etx_ffeth
 
   uci -q add olsrd LoadPlugin
   uci set olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -137,14 +136,22 @@ prepare() {
 
   uci -q add olsrd LoadPlugin
   uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_jsoninfo.so.0.0
-  uci set olsrd.@LoadPlugin[-1].accept="::1"
-  uci set olsrd.@LoadPlugin[-1].port=9090
+  uci set olsrd.@LoadPlugin[-1].library=olsrd_dyn_gw.so.0.5
+
+  uci -q add olsrd LoadPlugin
+  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
+  uci set olsrd.@LoadPlugin[-1].library=olsrd_httpinfo.so.0.1
+  uci set olsrd.@LoadPlugin[-1].Net='::'
+  uci set olsrd.@LoadPlugin[-1].port=1978
+
+  uci -q add olsrd LoadPlugin
+  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
+  uci set olsrd.@LoadPlugin[-1].library=olsrd_nameservice.so.0.3
 
   uci -q add olsrd LoadPlugin
   uci set olsrd.@LoadPlugin[-1]=LoadPlugin
   uci set olsrd.@LoadPlugin[-1].library=olsrd_txtinfo.so.0.1
-  uci set olsrd.@LoadPlugin[-1].accept="::1"
+  uci set olsrd.@LoadPlugin[-1].accept="::"
   uci set olsrd.@LoadPlugin[-1].port=2006
 
   uci commit olsrd
