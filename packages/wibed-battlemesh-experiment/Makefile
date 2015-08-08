@@ -40,6 +40,8 @@ define Package/wibed-battlemesh-experiment
 	+iputils-traceroute6 \
 	+bmx7 +bmx7-uci-config \
 	+olsrd +oonf-olsrd2 \
+	+olsrd-mod-arprefresh olsrd-mod-dyn-gw \
+	+olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-txtinfo \
 	+kmod-batman-adv +batctl \
 	+babeld \
 	+gnunet +gnunet-vpn +gnunet-gns \
