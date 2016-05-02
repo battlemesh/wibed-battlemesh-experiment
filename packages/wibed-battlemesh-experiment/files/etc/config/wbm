@@ -25,7 +25,7 @@ config wbm network
 
 config wbm wireless
 	option iface radio1
-	option ssid WBMv6
+	option ssid WBMv9
 	option bssid 02:ca:ff:ee:ba:be
 	option mcast_rate 6000
 	list channel_2ghz 1
