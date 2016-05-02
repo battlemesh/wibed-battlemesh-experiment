@@ -66,8 +66,16 @@ function main()
 	local n
 	for n = 1, #protocols do
 		local net = "lan_" .. protocols[n]
-		local ifn = string.format("@lan.%d", vlan_base + n - 1)
+		local netdev = net .. "_dev"
+		local ifn = string.format("lan_%d", vlan_base + n - 1)
 		local v4, v6 = generate_address(n, 0)
+
+		x:set("network", netdev, "device")
+		x:set("network", netdev, "type", "8021ad")
+		x:set("network", netdev, "name", ifn)
+		x:set("network", netdev, "ifname", "@lan")
+		x:set("network", netdev, "vid", vlan_base + n - 1)
+		x:set("network", netdev, "mtu", 1496)
 
 		x:set("network", net, "interface")
 		x:set("network", net, "proto", "static")
