@@ -8,7 +8,8 @@ mac=$(cat /sys/class/net/$dev/address)
 halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
 henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
 
-uci set wbm.network.ipv4_net="172.17.$henningID.201/24"
+uci set wbm.network.ipv4_net="172.17.$henningID.P/32"
+uci set wbm.network.ipv6_net="fcba:$henningID::P/128"
 
 ### Leave only one physical port on eth0.1, and put the rest into eth0.3
 ### eth0.1 will be left bridged with the mgmt network
@@ -32,7 +33,7 @@ uci set network.wiredtests=interface
 uci set network.wiredtests.ifname="eth0.3"
 uci set network.wiredtests.proto="static"
 uci set network.wiredtests.ipaddr="172.17.$henningID.1/24"
-uci set network.wiredtests.netmask="255.0.0.0"
+uci set network.wiredtests.ip6addr="fcba:$henningID::1/64"
 
 uci set dhcp.wiredtests=dhcp
 uci set dhcp.wiredtests.interface='wiredtests'
