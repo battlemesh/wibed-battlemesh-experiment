@@ -31,7 +31,7 @@ uci set network.lan.proto="static"
 uci set network.wiredtests=interface
 uci set network.wiredtests.ifname="eth0.3"
 uci set network.wiredtests.proto="static"
-uci set network.wiredtests.ipaddr="172.17.$henningID.1/16"
+uci set network.wiredtests.ipaddr="172.17.$henningID.1/24"
 uci set network.wiredtests.netmask="255.0.0.0"
 
 uci set dhcp.wiredtests=dhcp
