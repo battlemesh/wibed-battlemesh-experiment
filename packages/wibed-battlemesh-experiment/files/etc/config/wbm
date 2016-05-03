@@ -7,7 +7,7 @@ config wbm network
 
 	# protocols available
 	list protos olsr
-	list protos bmx6
+	list protos bmx7
 	list protos batadv
 	list protos babel
 	list protos olsr2
