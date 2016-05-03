@@ -7,9 +7,10 @@ dev=$(uci get wbm.network.primary_dev)
 mac=$(cat /sys/class/net/$dev/address)
 halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
 henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
+[ -z "$henningID" ] && henningID=99
 
-uci set wbm.network.ipv4_net="172.17.$henningID.P/32"
-uci set wbm.network.ipv6_net="fcba:$henningID::P/128"
+uci set wbm.network.ipv4_net="172.17.$henningID.1P/32"
+uci set wbm.network.ipv6_net="fcba:$henningID::1P/128"
 
 ### Leave only one physical port on eth0.1, and put the rest into eth0.3
 ### eth0.1 will be left bridged with the mgmt network
