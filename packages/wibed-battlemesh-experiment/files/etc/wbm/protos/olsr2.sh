@@ -32,31 +32,28 @@ prepare() {
   rm /etc/config/olsrd2
   touch /etc/config/olsrd2
 
-  uci -q add olsrd2 global
-  uci set olsrd2.@global[-1]=global
-  uci set olsrd2.@global[-1].pidfile='/var/run/olsrd2.pid'
-  uci set olsrd2.@global[-1].lockfile='/var/lock/olsrd2'
+  uci import olsrd2 << EOF
 
-  uci -q add olsrd2 log
-  uci set olsrd2.@log[-1]=log
-  uci set olsrd2.@log[-1].syslog='true'
-  uci set olsrd2.@log[-1].stderr='true'
+config global
+        option 'pidfile'        '/var/run/olsrd2.pid'
+        option 'lockfile'       '/var/lock/olsrd2'
 
-  uci commit olsrd2
+config log
+        option 'syslog'              'true'
+        option 'stderr'              'true'
+
+config interface
+        list         'ifname'        'wbm1_olsr2'
+
+config interface
+        list         'ifname'        'lan_olsr2'
+        option       'rx_bitrate'    '1000M'
+EOF
 
 }
 
 add() {
-  uci -q add olsrd2 interface
-  uci set olsrd2.@interface[-1]=interface
-  uci set olsrd2.@interface[-1].ifname=${LOGICAL_INTERFACE}
-
-  uci -q add olsrd2 interface
-  uci set olsrd2.@interface[1]=interface
-  uci set olsrd2.@interface[1].ifname='wan' 'lan'
-  uci set olsrd2.@interface[1].rx_bitrate='100M'
-
-  uci commit olsrd2
+    true
 }
 
 start () {
