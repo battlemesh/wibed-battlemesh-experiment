@@ -154,6 +154,8 @@ function main()
 
 		x:set("network", net, "interface")
 		x:set("network", net, "proto", "none")
+		x:set("network", net, "mtu", 1536)
+		x:set("network", net, "auto", 1)
 
 		if o11sif then
 			x:set("wireless", id, "mode", "mesh")
@@ -169,9 +171,18 @@ function main()
 			local v4, v6 = generate_address(n, wifi_num)
 
 			net = id .. "_" .. ((o11sif and "o11s") or protocols[n])
+			netdev = net .. "_dev"
+			local ifn = string.format("%s_%d", id, vlan_base + n - 1)
+			x:set("network", netdev, "device")
+			x:set("network", netdev, "type", "8021ad")
+			x:set("network", netdev, "name", ifn)
+			x:set("network", netdev, "ifname", "@" .. id .. "_base")
+			x:set("network", netdev, "vid", vlan_base + n - 1)
+			x:set("network", netdev, "mtu", 1532)
+
 			x:set("network", net, "interface")
 			x:set("network", net, "proto", "static")
-			x:set("network", net, "ifname", string.format("@%s_base.%d", id, n + vlan_base - 1))
+			x:set("network", net, "ifname", ifn)
 			x:set("network", net, "ipaddr", v4)
 			x:set("network", net, "ip6addr", v6)
 
