@@ -127,41 +127,28 @@ prepare() {
   rm /etc/config/olsrd
   touch /etc/config/olsrd
 
-  uci -q add olsrd olsrd
-  uci set olsrd.@olsrd[-1].IpVersion=6
+  uci import olsrd <<EOF
 
-  uci -q add olsrd LoadPlugin
-  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_arprefresh.so.0.1
+config olsrd
 
-  uci -q add olsrd LoadPlugin
-  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_dyn_gw.so.0.5
+config LoadPlugin
+        option library 'olsrd_arprefresh.so.0.1'
 
-  uci -q add olsrd LoadPlugin
-  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_httpinfo.so.0.1
-  uci set olsrd.@LoadPlugin[-1].Net='::'
-  uci set olsrd.@LoadPlugin[-1].port=1978
+config LoadPlugin
+        option library 'olsrd_txtinfo.so.0.1'
+        option accept '0.0.0.0'
+        option port '2004'
 
-  uci -q add olsrd LoadPlugin
-  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_nameservice.so.0.3
+config Interface
+        list interface 'lan_olsr'
+        list interface 'wbm1_olsr'
 
-  uci -q add olsrd LoadPlugin
-  uci set olsrd.@LoadPlugin[-1]=LoadPlugin
-  uci set olsrd.@LoadPlugin[-1].library=olsrd_txtinfo.so.0.1
-  uci set olsrd.@LoadPlugin[-1].accept="::"
-  uci set olsrd.@LoadPlugin[-1].port=2006
-
-  uci commit olsrd
+EOF
 }
 
 add() {
-  uci -q add olsrd Interface
-  uci set olsrd.@Interface[-1].interface=${LOGICAL_INTERFACE}
-  uci set olsrd.@Interface[-1].IPv6Multicast="ff02::6D"
-  uci set olsrd.@Interface[-1].speed=5
+  #uci -q add olsrd Interface
+  #uci add_list olsrd.@Interface[-1].interface=${LOGICAL_INTERFACE}
 
   interface_is_wifi()
   {
@@ -175,11 +162,11 @@ add() {
     esac
   }
 
-  if interface_is_wifi "${REAL_INTERFACE}"; then
-    uci set olsrd.@Interface[-1].Mode=mesh
-  else
-    uci set olsrd.@Interface[-1].Mode=ether
-  fi
+  #if interface_is_wifi "${REAL_INTERFACE}"; then
+  #  uci set olsrd.@Interface[-1].Mode=mesh
+  #else
+  #  uci set olsrd.@Interface[-1].Mode=ether
+  #fi
 
   uci commit olsrd
 }
