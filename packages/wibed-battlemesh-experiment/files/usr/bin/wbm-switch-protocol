@@ -7,6 +7,9 @@
 #  * olsr
 #  * olsr2
 
+validate() { echo "babel bmx7 olsr olsr2 batadv" | grep -F -q -w "$1"; }
+validate "$1" && echo "protocol valid" || exit 1;
+
 proto=$1
 
 echo "stopping firewall"
