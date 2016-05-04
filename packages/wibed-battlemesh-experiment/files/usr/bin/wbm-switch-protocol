@@ -1,4 +1,12 @@
 #!/bin/sh
+
+# proto should be one of:
+#  * babel
+#  * batadv
+#  * bmx7
+#  * olsr
+#  * olsr2
+
 proto=$1
 
 # stop & disable all routing deamons (except batman-adv which is not a daemon)
@@ -17,8 +25,8 @@ uci set network.wbm1_olsr.disabled=1
 uci set network.lan_olsr.disabled=1
 uci set network.wbm1_olsr2.disabled=1
 uci set network.lan_olsr2.disabled=1
-uci set network.wbm1_batman.disabled=1
-uci set network.lan_batman.disabled=1
+uci set network.wbm1_batadv.disabled=1
+uci set network.lan_batadv.disabled=1
 
 # enable the protocol we want
 uci set "network.wbm1_$proto.disabled=0"
