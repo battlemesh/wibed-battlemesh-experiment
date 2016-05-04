@@ -29,7 +29,8 @@ clean () {
 prepare () {
   uci set batman-adv.bat1=mesh
   uci set batman-adv.bat1.bridge_loop_avoidance=1
-  uci commit batman-adv
+  uci set batman-adv.bat1.distributed_arp_table=0
+    uci commit batman-adv
 
   uci set network.bat1=interface
   uci set network.bat1.ifname=bat1
