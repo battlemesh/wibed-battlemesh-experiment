@@ -22,7 +22,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=wibed-battlemesh-experiment
-PKG_RELEASE:=10
+PKG_RELEASE:=12
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
@@ -38,7 +38,7 @@ define Package/wibed-battlemesh-experiment
 	+netperf +iperf3 +tcpdump +iputils-ping \
 	+iputils-tracepath +iputils-tracepath6 \
 	+iputils-traceroute6 \
-	+bmx7 +bmx7-uci-config +bmx7-tun +bmx7-table +bmx7-sms +bmx7-json \
+	+bmx7 +bmx7-uci-config +bmx7-tun +bmx7-table +bmx7-sms +bmx7-json +bmx7-iwinfo +bmx7-topology \
 	+olsrd +oonf-olsrd2 \
 	+olsrd-mod-arprefresh \
 	+olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-txtinfo \
