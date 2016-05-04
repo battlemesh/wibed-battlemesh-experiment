@@ -10,6 +10,7 @@
 proto=$1
 
 # stop & disable all routing deamons (except batman-adv which is not a daemon)
+echo "stopping protocols"
 /etc/init.d/babeld stop; /etc/init.d/babeld disable
 /etc/init.d/bmx7 stop; /etc/init.d/bmx7 disable
 /etc/init.d/olsrd stop; /etc/init.d/olsrd disable
@@ -17,6 +18,7 @@ proto=$1
 /etc/init.d/olsrd2 stop; /etc/init.d/olsrd2 disable
 
 # disable all the interfaces
+echo "disabling interfaces"
 uci set network.wbm1_babel.disabled=1
 uci set network.lan_babel.disabled=1
 uci set network.wbm1_bmx7.disabled=1
@@ -29,11 +31,15 @@ uci set network.wbm1_batadv.disabled=1
 uci set network.lan_batadv.disabled=1
 
 # enable the protocol we want
+echo "enabling $proto interfaces"
 uci set "network.wbm1_$proto.disabled=0"
 uci set "network.lan_$proto.disabled=0"
+echo "committing uci"
 uci commit
+echo "reloading openwrt processes"
 reload_config
 
+echo "starting $proto"
 if [ "$proto" == "babel" ]; then
         /etc/init.d/babeld start; /etc/init.d/babeld enable
 elif [ "$proto" == "bmx7" ]; then
@@ -44,4 +50,5 @@ elif [ "$proto" == "olsr" ]; then
 elif [ "$proto" == "olsr2" ]; then
         /etc/init.d/olsrd2 start; /etc/init.d/olsrd2 enable
 fi
+echo "completed"
 
