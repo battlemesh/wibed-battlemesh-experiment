@@ -7,6 +7,12 @@
 #  * olsr
 #  * olsr2
 
+dev=$(uci get wbm.network.primary_dev)
+mac=$(cat /sys/class/net/$dev/address)
+halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
+henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
+[ -z "$henningID" ] && henningID=99
+
 validate() { echo "babel bmx7 olsr olsr2 batadv" | grep -F -q -w "$1"; }
 validate "$1" && echo "protocol valid" || exit 1;
 
@@ -38,7 +44,9 @@ uci set network.lan_olsr2.disabled=1
 uci set network.wbm1_batadv.disabled=1
 uci set network.lan_batadv.disabled=1
 uci set network.wiredtests.type=
-uci del_list network.wiredtests.ifname='bat1'
+uci set network.wiredtests.ifname='eth0.3'
+uci set network.wiredtests.ipaddr="172.17.$henningID.1/24"
+uci set network.wiredtests.ip6addr="2001:db8:$henningID::1/64"
 
 # enable the protocol we want
 echo "enabling $proto interfaces"
@@ -48,6 +56,8 @@ uci set "network.lan_$proto.disabled=0"
 if [ $proto == "batadv" ]; then
     uci set network.wiredtests.type='bridge'
     uci add_list network.wiredtests.ifname='bat1'
+    uci set network.wiredtests.ipaddr="172.17.$henningID.1/16"
+    uci set network.wiredtests.ip6addr="2001:db8:$henningID::1/32"
 fi
 
 echo "committing uci"
