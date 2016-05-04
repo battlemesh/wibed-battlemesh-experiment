@@ -34,14 +34,14 @@ uci set "network.lan_$proto.disabled=0"
 uci commit
 reload_config
 
-if [ $proto="babel" ]; then
+if [ "$proto" == "babel" ]; then
         /etc/init.d/babeld start; /etc/init.d/babeld enable
-elif [ $proto="bmx7" ]; then
+elif [ "$proto" == "bmx7" ]; then
         /etc/init.d/bmx7 start; /etc/init.d/bmx7 enable
-elif [ $proto="olsr" ]; then
+elif [ "$proto" == "olsr" ]; then
         /etc/init.d/olsrd start; /etc/init.d/olsrd enable
         /etc/init.d/olsrd6 start; /etc/init.d/olsrd6 enable
-elif [ $proto="olsr2" ]; then
+elif [ "$proto" == "olsr2" ]; then
         /etc/init.d/olsrd2 start; /etc/init.d/olsrd2 enable
 fi
 
