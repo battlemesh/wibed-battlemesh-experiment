@@ -38,6 +38,7 @@ prepare () {
   uci set network.bat1.ipaddr=""
   uci set network.bat1.netmask=""
   uci set network.bat1.mtu=1500
+  uci set network.bat1.routing_algo='BATMAN_V'
   
   uci set network.batadv_mesh=interface
   uci set network.batadv_mesh.type=bridge
@@ -45,8 +46,8 @@ prepare () {
   uci add_list network.batadv_mesh.ifname=bat1
   uci add_list network.batadv_mesh.ifname=eth0.3
   uci set network.batadv_mesh.disabled=1
-  uci set network.batadv_mesh.ipaddr='172.17.$henningID.1/24'
-  uci set network.batadv_mesh.ip6addr='fcba:$henningID::/64'
+  uci set network.batadv_mesh.ipaddr="172.17.$henningID.1P/24"
+  uci set network.batadv_mesh.ip6addr="fcba:$henningID::1P/64"
   uci commit network
 }
 
