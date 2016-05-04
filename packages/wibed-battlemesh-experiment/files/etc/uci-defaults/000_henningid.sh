@@ -46,6 +46,21 @@ uci set dhcp.wiredtests.ra='server'
 ### don't announce a default gateway (don't break laptops internet), but push a static route
 uci set dhcp.wiredtests.dhcp_option="3 121,172.17.0.0/16,172.17.$henningID.1"
 
+### trick odhcpd into sending RA that announce a valid gateway
+### but add more specific routes that force unreachable,
+### to reply that to clients and avoid them waiting for timeouts
+uci set network.fake_v6_internet=route6
+uci set network.fake_v6_internet.interface='lan'
+uci set network.fake_v6_internet.target='::/0'
+uci set network.fake_v6_internet_unreachable1=route6
+uci set network.fake_v6_internet_unreachable1.interface='lan'
+uci set network.fake_v6_internet_unreachable1.target='::/1'
+uci set network.fake_v6_internet_unreachable1.type='unreachable'
+uci set network.fake_v6_internet_unreachable2=route6
+uci set network.fake_v6_internet_unreachable2.interface='lan'
+uci set network.fake_v6_internet_unreachable2.target='8000::/1'
+uci set network.fake_v6_internet_unreachable2.type='unreachable'
+
 uci set wibed.location.testbed='BattleMeshv9-Porto'
 
 ### olsrd6 was not considered at all at battlemeshv6 setup scripts, so we're making a hacky dump of the config
