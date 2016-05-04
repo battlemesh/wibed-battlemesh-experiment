@@ -69,7 +69,7 @@ config Interface
 
 config Hna6
         option netaddr 'fcba:$henningID::'
-        option netmask '64'
+        option prefix '64'
 EOF
 
 uci commit
