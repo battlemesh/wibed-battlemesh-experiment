@@ -151,7 +151,7 @@ config Interface
 
 config Hna4
         option netaddr '172.17.$henningID.0'
-        option netmask '24'
+        option netmask '255.255.255.0'
 
 EOF
 }
