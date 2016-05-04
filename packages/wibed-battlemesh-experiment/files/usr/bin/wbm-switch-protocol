@@ -1,0 +1,39 @@
+#!/bin/sh
+proto=$1
+
+# stop & disable all routing deamons (except batman-adv which is not a daemon)
+/etc/init.d/babeld stop; /etc/init.d/babeld disable
+/etc/init.d/bmx7 stop; /etc/init.d/bmx7 disable
+/etc/init.d/olsrd stop; /etc/init.d/olsrd disable
+/etc/init.d/olsrd6 stop; /etc/init.d/olsrd6 disable
+/etc/init.d/olsrd2 stop; /etc/init.d/olsrd2 disable
+
+# disable all the interfaces
+uci set network.wbm1_babel.disabled=1
+uci set network.lan_babel.disabled=1
+uci set network.wbm1_bmx7.disabled=1
+uci set network.lan_bmx7.disabled=1
+uci set network.wbm1_olsr.disabled=1
+uci set network.lan_olsr.disabled=1
+uci set network.wbm1_olsr2.disabled=1
+uci set network.lan_olsr2.disabled=1
+uci set network.wbm1_batman.disabled=1
+uci set network.lan_batman.disabled=1
+
+# enable the protocol we want
+uci set "network.wbm1_$proto.disabled=0"
+uci set "network.lan_$proto.disabled=0"
+uci commit
+reload_config
+
+if [ $proto="babel" ]; then
+        /etc/init.d/babeld start; /etc/init.d/babeld enable
+elif [ $proto="bmx7" ]; then
+        /etc/init.d/bmx7 start; /etc/init.d/bmx7 enable
+elif [ $proto="olsr" ]; then
+        /etc/init.d/olsrd start; /etc/init.d/olsrd enable
+        /etc/init.d/olsrd6 start; /etc/init.d/olsrd6 enable
+elif [ $proto="olsr2" ]; then
+        /etc/init.d/olsrd2 start; /etc/init.d/olsrd2 enable
+fi
+
