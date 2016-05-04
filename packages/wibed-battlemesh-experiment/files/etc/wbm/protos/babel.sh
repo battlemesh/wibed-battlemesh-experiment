@@ -69,6 +69,7 @@ start () {
 
 stop () {
   /etc/init.d/babeld stop
+  sleep 1
   killall -9 babeld 2>/dev/null
 }
 

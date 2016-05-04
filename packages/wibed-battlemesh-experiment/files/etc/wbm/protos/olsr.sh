@@ -177,6 +177,7 @@ start () {
 
 stop () {
     /etc/init.d/olsrd stop
+    sleep 1
     killall -9 olsrd 2>/dev/null
 }
 

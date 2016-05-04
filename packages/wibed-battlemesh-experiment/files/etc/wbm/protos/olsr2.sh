@@ -62,6 +62,7 @@ start () {
 
 stop () {
     /etc/init.d/olsrd2 stop
+    sleep 1
     killall -9 olsrd2 2>/dev/null
 }
 

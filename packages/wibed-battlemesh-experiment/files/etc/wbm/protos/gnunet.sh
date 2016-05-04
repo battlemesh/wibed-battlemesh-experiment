@@ -39,6 +39,7 @@ start() {
 
 stop() {
 	/etc/init.d/gnunet stop
+        sleep 1
 }
 
 $ACTION

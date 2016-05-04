@@ -95,6 +95,7 @@ add () {
 
 stop () {
   /etc/init.d/bmx7 stop
+  sleep 1
   killall -9 bmx7 2>/dev/null
 }
 
