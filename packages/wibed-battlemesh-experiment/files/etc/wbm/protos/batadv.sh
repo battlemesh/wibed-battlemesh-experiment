@@ -8,6 +8,12 @@ IPV6=$5
 R1=$6
 R2=$7
 
+dev=$(uci get wbm.network.primary_dev)
+mac=$(cat /sys/class/net/$dev/address)
+halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
+henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
+[ -z "$henningID" ] && henningID=99
+
 ipv4_addr () {
   echo ${IPV4%%/*}
 }
@@ -32,6 +38,15 @@ prepare () {
   uci set network.bat1.ipaddr=""
   uci set network.bat1.netmask=""
   uci set network.bat1.mtu=1500
+  
+  uci set network.batadv_mesh=interface
+  uci set network.batadv_mesh.type=bridge
+  uci set network.batadv_mesh.proto=static
+  uci add_list network.batadv_mesh.ifname=bat1
+  uci add_list network.batadv_mesh.ifname=eth0.3
+  uci set network.batadv_mesh.disabled=1
+  uci set network.batadv_mesh.ipaddr='172.17.$henningID.1/24'
+  uci set network.batadv_mesh.ip6addr='fcba:$henningID::/64'
   uci commit network
 }
 

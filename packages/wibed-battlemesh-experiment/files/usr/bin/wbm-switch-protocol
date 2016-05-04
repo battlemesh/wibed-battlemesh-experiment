@@ -37,11 +37,17 @@ uci set network.wbm1_olsr2.disabled=1
 uci set network.lan_olsr2.disabled=1
 uci set network.wbm1_batadv.disabled=1
 uci set network.lan_batadv.disabled=1
+uci set network.batadv_mesh.disabled=1
 
 # enable the protocol we want
 echo "enabling $proto interfaces"
 uci set "network.wbm1_$proto.disabled=0"
 uci set "network.lan_$proto.disabled=0"
+
+if [ $proto == "batadv" ]; then
+    uci set network.batadv_mesh.disabled=0
+fi
+
 echo "committing uci"
 uci commit
 
