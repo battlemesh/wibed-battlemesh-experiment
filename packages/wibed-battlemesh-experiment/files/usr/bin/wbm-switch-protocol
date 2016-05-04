@@ -17,6 +17,8 @@ echo "stopping protocols"
 /etc/init.d/olsrd6 stop; /etc/init.d/olsrd6 disable
 /etc/init.d/olsrd2 stop; /etc/init.d/olsrd2 disable
 
+sleep 5
+
 # disable all the interfaces
 echo "disabling interfaces"
 uci set network.wbm1_babel.disabled=1
