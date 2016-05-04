@@ -15,6 +15,12 @@ REAL_INTERFACE=$3
 IPV4=$4
 IPV6=$5
 
+dev=$(uci get wbm.network.primary_dev)
+mac=$(cat /sys/class/net/$dev/address)
+halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
+henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
+[ -z "$henningID" ] && henningID=99
+
 store_neigh_stats()
 {
 # output should look like this
@@ -37,6 +43,10 @@ prepare() {
 config global
         option 'pidfile'        '/var/run/olsrd2.pid'
         option 'lockfile'       '/var/lock/olsrd2'
+
+config olsrv2
+        list lan '172.17.$henningID.0/24'
+        list lan 'fcba:$henningID::/64'
 
 config log
         option 'syslog'              'true'
