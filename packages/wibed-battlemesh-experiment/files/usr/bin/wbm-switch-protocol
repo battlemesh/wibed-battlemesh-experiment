@@ -44,8 +44,13 @@ uci set "network.wbm1_$proto.disabled=0"
 uci set "network.lan_$proto.disabled=0"
 echo "committing uci"
 uci commit
+
+sleep 0.5
+
 echo "reloading openwrt processes"
 reload_config
+
+sleep 5
 
 echo "starting $proto"
 if [ "$proto" == "babel" ]; then
