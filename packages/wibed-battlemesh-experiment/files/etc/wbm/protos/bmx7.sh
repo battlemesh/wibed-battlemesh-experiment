@@ -21,74 +21,49 @@ prepare () {
   rm -f /etc/config/bmx7
   touch /etc/config/bmx7
 
-  uci set bmx7.general=bmx7
-# uci set bmx7.general.ipAutoPrefix="::/0"
-# uci set bmx7.general.globalPrefix="fd11::/48"
+  uci import bmx7 <<EOF
+config 'plugin'
+        option 'plugin' 'bmx7_config.so'
 
-  # Prevent syslog messages by default
-  uci set bmx7.general.syslog=0
+config 'plugin'
+        option 'plugin' 'bmx7_iwinfo.so'
 
-  # Some tunning for the WBM scenario
-  uci set bmx7.general.dbgMuteTimeout=1000000
-# uci set bmx7.general.purgeTimeout=70000
-# uci set bmx7.general.linkPurgeTimeout=20000
-# uci set bmx7.general.dadTimeout=15000
+config 'plugin'
+        option 'plugin' 'bmx7_json.so'
 
-  # Enable bmx7 uci config plugin
-  uci set bmx7.config=plugin
-  uci set bmx7.config.plugin=bmx7_config.so
+config 'plugin'
+        option 'plugin' 'bmx7_tun.so'
 
-  # Enable de JSON plugin to get bmx7 information in json format
-#  uci set bmx7.json=plugin
-#  uci set bmx7.json.plugin=bmx7_json.so
+config 'plugin'
+        option 'plugin' 'bmx7_topology.so'
 
-  # Disable ThrowRules because they are broken in IPv6 with current Linux Kernel
-  uci set bmx7.ipVersion=ipVersion
-  uci set bmx7.ipVersion.ipVersion=6
-  uci set bmx7.ipVersion.throwRules=0
+config 'tunDev' 'tunDev'
+        option 'tunDev' 'default'
 
+config 'tunOut'
+        option 'tunOut' 'ip4'
+        option 'network' '172.0.0.0/16'
 
-  # Smart gateway search for IPV4
+config 'tunOut'
+        option 'tunOut' 'ip6'
+        option 'network' 'fcba::/16'
+EOF
 
-  # Search for any announcement of 10/8 in the mesh cloud
-  #uci set bmx7.mesh=tunOut
-  #uci set bmx7.mesh.tunOut=mesh
-  #uci set bmx7.mesh.network=10.0.0.0/8
-  #uci set bmx7.mesh.minPrefixLen=24
-  #uci set bmx7.mesh.maxPrefixLen=32
-
-  # Search for internet in the mesh cloud
-  #uci set bmx7.inet=tunOut
-  #uci set bmx7.inet.tunOut=inet
-  #uci set bmx7.inet.network=0.0.0.0/0
-  #uci set bmx7.inet.minPrefixLen=0
-  #uci set bmx7.inet.maxPrefixLen=0
-
-
-# Smart gateway search for IPV6
-  
-  # Search for any IPv6 announcement in the mesh cloud
-  #uci set bmx7.ipv6=tunOut
-  #uci set bmx7.ipv6.tunOut=ipv6
-  #uci set bmx7.ipv6.network=::/0
-
-  uci commit bmx7
 }
 
 add () {
   uci set bmx7.${LOGICAL_INTERFACE}=dev
   uci set bmx7.${LOGICAL_INTERFACE}.dev=${REAL_INTERFACE}
-  uci set bmx7.${LOGICAL_INTERFACE}.globalPrefix="$( echo ${IPV6} echo | sed s/"\/.*"/"\/128"/ )"
+  # if it's a wifi interface, force linklayer detection
+  if ! [ "${LOGICAL_INTERFACE##wbm}" == "${LOGICAL_INTERFACE}" ] ; then
+    uci set bmx7.${LOGICAL_INTERFACE}.linklayer=2
+  fi
 
-  # To enable IPv4
-
-  #if uci -q get bmx7.general.tun4Address > /dev/null ; then
-  #  uci set bmx7.tun_${LOGICAL_INTERFACE}=tunInNet
-  #  uci set bmx7.tun_${LOGICAL_INTERFACE}.tunInNet="$( echo ${IPV4} echo | sed s/"\/.*"/"\/32"/ )"
-  #  uci set bmx7.tun_${LOGICAL_INTERFACE}.bandwidth="128000000000"
-  #else
-  #  uci set bmx7.general.tun4Address="$( echo ${IPV4} echo | sed s/"\/.*"/"\/32"/ )"
-  #fi
+  if ! uci -q get bmx7.tunDev.tun4Address > /dev/null ; then
+    # use a different ip ending (177) to avoid conflicts with interface-specific ips
+    uci set bmx7.tunDev.tun4Address="$( echo ${IPV4} | sed s/"\.\w\+\/.*"/".177\/24"/ )"
+    uci set bmx7.tunDev.tun6Address="$( echo ${IPV6} | sed s/"\:\w\+\/.*"/":177\/64"/ )"
+  fi
 
   uci commit bmx7
 }
