@@ -45,7 +45,6 @@ prepare () {
   uci set network.batadv_mesh.type=bridge
   uci set network.batadv_mesh.proto=static
   uci add_list network.batadv_mesh.ifname=bat1
-  uci add_list network.batadv_mesh.ifname=eth0.3
   uci set network.batadv_mesh.disabled=1
   uci commit network
 }
