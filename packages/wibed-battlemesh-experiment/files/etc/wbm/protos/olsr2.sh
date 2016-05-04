@@ -46,7 +46,7 @@ config global
 
 config olsrv2
         list lan '172.17.$henningID.0/24'
-        list lan 'fcba:$henningID::/64'
+        list lan '2001:db8:$henningID::/64'
 
 config log
         option 'syslog'              'true'

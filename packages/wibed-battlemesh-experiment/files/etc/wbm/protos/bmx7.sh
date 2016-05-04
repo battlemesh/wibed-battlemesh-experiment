@@ -46,7 +46,7 @@ config 'tunOut'
 
 config 'tunOut'
         option 'tunOut' 'ip6'
-        option 'network' 'fcba::/16'
+        option 'network' '2001:db8::/32'
 EOF
 
 }

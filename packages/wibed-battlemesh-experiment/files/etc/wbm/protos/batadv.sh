@@ -55,7 +55,7 @@ add () {
     uci set network.batadv_mesh.macaddr="$(printf '02:ba:ff:%02x:%02x:01' $R1 $R2)"
   fi
   if [ "$(uci -q get network.bat1.ip6addr)" == "" ] ; then
-    uci set network.batadv_mesh.ip6addr="$(printf 'fdbb::%02x%02x/64' $R1 $R2)"
+    uci set network.batadv_mesh.ip6addr="$(printf '2001:db8:$henningID::%02x%02x/64' $R1 $R2)"
   fi
   if [ "$(uci -q get network.bat1.ipaddr)" == "" ] ; then
     uci set network.batadv_mesh.ipaddr="$(ipv4_addr)"
