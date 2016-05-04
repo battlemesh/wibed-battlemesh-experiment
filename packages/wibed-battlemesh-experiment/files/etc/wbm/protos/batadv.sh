@@ -39,6 +39,7 @@ prepare () {
   uci set network.bat1.netmask=""
   uci set network.bat1.mtu=1500
   uci set network.bat1.routing_algo='BATMAN_V'
+  uci set network.wbm1_batadv.routing_algo='BATMAN_V'
   
   uci set network.batadv_mesh=interface
   uci set network.batadv_mesh.type=bridge
@@ -46,21 +47,19 @@ prepare () {
   uci add_list network.batadv_mesh.ifname=bat1
   uci add_list network.batadv_mesh.ifname=eth0.3
   uci set network.batadv_mesh.disabled=1
-  uci set network.batadv_mesh.ipaddr="172.17.$henningID.1P/24"
-  uci set network.batadv_mesh.ip6addr="fcba:$henningID::1P/64"
   uci commit network
 }
 
 add () {
   if [ "$(uci -q get network.bat1.macaddr)" == "" ] ; then
-    uci set network.bat1.macaddr="$(printf '02:ba:ff:%02x:%02x:01' $R1 $R2)"
+    uci set network.batadv_mesh.macaddr="$(printf '02:ba:ff:%02x:%02x:01' $R1 $R2)"
   fi
   if [ "$(uci -q get network.bat1.ip6addr)" == "" ] ; then
-    uci set network.bat1.ip6addr="$(printf 'fdbb::%02x%02x/64' $R1 $R2)"
+    uci set network.batadv_mesh.ip6addr="$(printf 'fdbb::%02x%02x/64' $R1 $R2)"
   fi
   if [ "$(uci -q get network.bat1.ipaddr)" == "" ] ; then
-    uci set network.bat1.ipaddr="$(ipv4_addr)"
-    uci set network.bat1.netmask="$(ipv4_netmask)"
+    uci set network.batadv_mesh.ipaddr="$(ipv4_addr)"
+    uci set network.batadv_mesh.netmask="$(ipv4_netmask)"
   fi
   uci set network.${LOGICAL_INTERFACE}=interface
   uci set network.${LOGICAL_INTERFACE}.proto=batadv
