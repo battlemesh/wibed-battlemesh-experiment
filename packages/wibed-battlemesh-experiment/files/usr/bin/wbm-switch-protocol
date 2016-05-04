@@ -9,6 +9,9 @@
 
 proto=$1
 
+echo "stopping firewall"
+/etc/init.d/firewall stop; /etc/init.d/firewall disable
+
 # stop & disable all routing deamons (except batman-adv which is not a daemon)
 echo "stopping protocols"
 /etc/init.d/babeld stop; /etc/init.d/babeld disable
