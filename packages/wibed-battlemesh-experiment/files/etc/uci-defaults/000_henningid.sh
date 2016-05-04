@@ -51,21 +51,25 @@ uci set wibed.location.testbed='BattleMeshv9-Porto'
 ### olsrd6 was not considered at all at battlemeshv6 setup scripts, so we're making a hacky dump of the config
 uci import olsrd6 <<EOF
 config olsrd
- option IpVersion '6'
+        option IpVersion '6'
 
 config LoadPlugin
- option library 'olsrd_arprefresh.so.0.1'
+        option library 'olsrd_arprefresh.so.0.1'
 
 config LoadPlugin
- option library 'olsrd_txtinfo.so.0.1'
- option accept '::'
- option port '2006'
+        option library 'olsrd_txtinfo.so.0.1'
+        option accept '::'
+        option port '2006'
 
 config Interface
- option interface 'lan_olsr'
+        option interface 'lan_olsr'
 
 config Interface
- option interface 'wbm1_olsr'
+        option interface 'wbm1_olsr'
+
+config Hna6
+        option netaddr 'fcba:$henningID::'
+        option netmask '64'
 EOF
 
 uci commit

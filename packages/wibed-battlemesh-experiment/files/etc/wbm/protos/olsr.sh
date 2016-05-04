@@ -15,6 +15,12 @@ REAL_INTERFACE=$3
 IPV4=$4
 IPV6=$5
 
+dev=$(uci get wbm.network.primary_dev)
+mac=$(cat /sys/class/net/$dev/address)
+halfmac=$(echo $mac | cut -d : -f 4-6 | tr -d :)
+henningID=$(grep -m 1 $halfmac /etc/wbm/nodelist.txt | cut -f 2)
+[ -z "$henningID" ] && henningID=99
+
 # output should look like this
 # and will be used to plot some .dot-files for visualization
 #
@@ -142,6 +148,10 @@ config LoadPlugin
 config Interface
         list interface 'lan_olsr'
         list interface 'wbm1_olsr'
+
+config Hna4
+        option netaddr '172.17.$henningID.0'
+        option netmask '24'
 
 EOF
 }
