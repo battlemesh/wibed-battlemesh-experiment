@@ -29,9 +29,12 @@ uci set network.lan=interface
 uci set network.lan.ifname="eth0.2"
 uci set network.lan.proto="static"
 
-### use eth0.3 for "laptops"
+### use eth0.3 for "laptops", but put it on a bridge (by default alone, for L3 protocols)
+### so that we can brigde bat1 when needed
 uci set network.wiredtests=interface
-uci set network.wiredtests.ifname="eth0.3"
+uci set network.wiredtests.type="bridge"
+uci del network.wiredtests.ifname
+uci add_list network.wiredtests.ifname="eth0.3"
 uci set network.wiredtests.proto="static"
 uci set network.wiredtests.ipaddr="172.17.$henningID.1/24"
 uci set network.wiredtests.ip6addr="2001:db8:$henningID::1/64"

@@ -43,8 +43,9 @@ uci set network.wbm1_olsr2.disabled=1
 uci set network.lan_olsr2.disabled=1
 uci set network.wbm1_batadv.disabled=1
 uci set network.lan_batadv.disabled=1
-uci set network.wiredtests.type=
-uci set network.wiredtests.ifname='eth0.3'
+uci set network.wiredtests.type="bridge"
+uci del network.wiredtests.ifname
+uci add_list network.wiredtests.ifname="eth0.3"
 uci set network.wiredtests.ipaddr="172.17.$henningID.1/24"
 uci set network.wiredtests.ip6addr="2001:db8:$henningID::1/64"
 
