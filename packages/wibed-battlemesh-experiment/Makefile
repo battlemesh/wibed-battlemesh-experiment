@@ -22,7 +22,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=wibed-battlemesh-experiment
-PKG_RELEASE:=17
+PKG_RELEASE:=18
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
