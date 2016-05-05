@@ -70,12 +70,12 @@ fi
 echo "committing uci"
 uci commit
 
-sleep 0.5
+sleep 1
 
 echo "reloading openwrt processes"
 reload_config
 
-sleep 5
+sleep 4
 
 echo "starting $proto"
 if [ "$proto" == "babel" ]; then
