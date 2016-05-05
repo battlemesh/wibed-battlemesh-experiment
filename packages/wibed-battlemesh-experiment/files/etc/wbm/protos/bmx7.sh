@@ -42,7 +42,7 @@ config 'tunDev' 'tunDev'
 
 config 'tunOut'
         option 'tunOut' 'ip4'
-        option 'network' '172.0.0.0/16'
+        option 'network' '172.16.0.0/12'
 
 config 'tunOut'
         option 'tunOut' 'ip6'
