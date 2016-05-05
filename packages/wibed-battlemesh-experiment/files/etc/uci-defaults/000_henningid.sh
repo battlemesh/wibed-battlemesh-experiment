@@ -83,7 +83,7 @@ config Interface
         option interface 'lan_olsr'
 
 config Interface
-        option interface 'wbm1_olsr'
+        option interface 'wbm1'
 
 config Hna6
         option netaddr '2001:db8:$henningID::'
