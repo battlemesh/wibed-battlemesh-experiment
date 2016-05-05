@@ -54,6 +54,12 @@ echo "enabling $proto interfaces"
 uci set "network.wbm1_$proto.disabled=0"
 uci set "network.lan_$proto.disabled=0"
 
+### make all protocols use the raw interface (instead of the vlans)
+uci set network.wbm1_$proto.ifname='@wbm1_base'
+### point the config of all protocols to the raw interface
+uci set bmx7.wbm1_bmx7.dev='wbm1'
+
+
 if [ $proto == "batadv" ]; then
     uci set network.wiredtests.type='bridge'
     uci add_list network.wiredtests.ifname='bat1'

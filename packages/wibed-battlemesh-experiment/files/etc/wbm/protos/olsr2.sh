@@ -53,7 +53,7 @@ config log
         option 'stderr'              'true'
 
 config interface
-        list         'ifname'        'wbm1_olsr2'
+        list         'ifname'        'wbm1'
 
 config interface
         list         'ifname'        'lan_olsr2'
