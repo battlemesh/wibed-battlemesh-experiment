@@ -22,7 +22,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=wibed-battlemesh-experiment
-PKG_RELEASE:=22
+PKG_RELEASE:=24
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
@@ -44,6 +44,8 @@ define Package/wibed-battlemesh-experiment
 	+olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-txtinfo \
 	+kmod-batman-adv +batctl \
 	+babeld \
+	+collectd +collectd-mod-conntrack +collectd-mod-cpu +collectd-mod-interface +collectd-mod-iptables +collectd-mod-iwinfo \
+	+collectd-mod-network +collectd-mod-olsrd +collectd-mod-wireless +collectd-mod-uptime \
 
 endef
 

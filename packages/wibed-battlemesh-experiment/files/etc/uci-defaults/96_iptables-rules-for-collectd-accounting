@@ -1,0 +1,38 @@
+#!/bin/sh
+
+### UDPv4/v6  698 olsr1
+### UDPv4/v6  269 olsr2
+### UDPv4/v6 6696 babeld
+### UDPv6    6270 bmx7
+
+cat << EOF > /etc/firewall.user
+### Count bytes/packets
+### OLSRv1 IPv4
+iptables -I INPUT -j ACCEPT -p udp --dport 698 -m comment --comment "input-olsr1-ipv4"
+iptables -I OUTPUT -j ACCEPT -p udp --dport 698 -m comment --comment "output-olsr1-ipv4"
+
+ip6tables -I INPUT -j ACCEPT -p udp --dport 698 -m comment --comment "input-olsr1-ipv6"
+ip6tables -I OUTPUT -j ACCEPT -p udp --dport 698 -m comment --comment "output-olsr1-ipv6"
+
+### OLSRv2
+iptables -I INPUT -j ACCEPT -p udp --dport 269 -m comment --comment "input-olsr2-ipv4"
+iptables -I OUTPUT -j ACCEPT -p udp --dport 269 -m comment --comment "output-olsr2-ipv4"
+
+ip6tables -I INPUT -j ACCEPT -p udp --dport 269 -m comment --comment "input-olsr2-ipv6"
+ip6tables -I OUTPUT -j ACCEPT -p udp --dport 269 -m comment --comment "output-olsr2-ipv6"
+
+### Babel
+iptables -I INPUT -j ACCEPT -p udp --dport 6696 -m comment --comment "input-babel-ipv4"
+iptables -I OUTPUT -j ACCEPT -p udp --dport 6696 -m comment --comment "output-babel-ipv4"
+
+ip6tables -I INPUT -j ACCEPT -p udp --dport 6696 -m comment --comment "input-babel-ipv6"
+ip6tables -I OUTPUT -j ACCEPT -p udp --dport 6696 -m comment --comment "output-babel-ipv6"
+
+### BMX7
+iptables -I INPUT -j ACCEPT -p udp --dport 6270 -m comment --comment "input-bmx7-ipv4"
+iptables -I OUTPUT -j ACCEPT -p udp --dport 6270 -m comment --comment "output-bmx7-ipv4"
+
+ip6tables -I INPUT -j ACCEPT -p udp --dport 6270 -m comment --comment "input-bmx7-ipv6"
+ip6tables -I OUTPUT -j ACCEPT -p udp --dport 6270 -m comment --comment "output-bmx7-ipv6"
+
+EOF
