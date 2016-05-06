@@ -35,7 +35,7 @@ define Package/wibed-battlemesh-experiment
 
   DEPENDS:= \
 	+ip +mtr +iputils-ping6 \
-	+netperf +iperf3 +tcpdump +iputils-ping \
+	+netperf +iperf3 +tcpdump-mini +iputils-ping \
 	+iputils-tracepath +iputils-tracepath6 \
 	+iputils-traceroute6 \
 	+bmx7 +bmx7-uci-config +bmx7-tun +bmx7-table +bmx7-sms +bmx7-json +bmx7-iwinfo +bmx7-topology \
