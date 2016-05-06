@@ -40,6 +40,9 @@ config 'plugin'
 config 'tunDev' 'tunDev'
         option 'tunDev' 'default'
 
+config bmx7 'general'
+        option tunMtu '1448'
+
 config 'tunOut'
         option 'tunOut' 'ip4'
         option 'network' '172.16.0.0/12'
