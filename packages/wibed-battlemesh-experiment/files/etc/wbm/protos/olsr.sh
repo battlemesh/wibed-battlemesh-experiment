@@ -147,7 +147,7 @@ config LoadPlugin
 
 config Interface
         list interface 'lan_olsr'
-        list interface 'wbm1'
+        list interface 'wbm1_base'
 
 config Hna4
         option netaddr '172.17.$henningID.0'
