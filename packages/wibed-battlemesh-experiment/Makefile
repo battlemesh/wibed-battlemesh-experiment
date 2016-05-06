@@ -46,7 +46,7 @@ define Package/wibed-battlemesh-experiment
 	+babeld \
 	+collectd +collectd-mod-conntrack +collectd-mod-cpu +collectd-mod-interface +collectd-mod-iptables +collectd-mod-iwinfo \
 	+collectd-mod-network +collectd-mod-olsrd +collectd-mod-wireless +collectd-mod-uptime \
-
+	+curl
 endef
 
 define Package/wibed-battlemesh-experiment/description

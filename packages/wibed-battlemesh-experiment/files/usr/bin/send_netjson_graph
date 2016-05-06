@@ -1,0 +1,9 @@
+#!/bin/sh
+BASE_URL="http://ninux-graph.netjson.org"
+UUID="907f418c-caa3-4d7f-abc2-d726b49cf724"
+KEY="2VkL8aY3UBqIZkv1GEUGxsfXgcn32uxG"
+
+COLLECTOR_URL="$BASE_URL/api/receive/$UUID/?key=$KEY"
+DATA=$(echo "/netjsoninfo filter graph ipv4_0" | nc 127.0.0.1 2009)
+curl -s -X POST -d "$DATA" --header "Content-Type: text/plain" $COLLECTOR_URL
+
