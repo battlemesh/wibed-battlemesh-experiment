@@ -47,7 +47,7 @@ add () {
   uci set network.${LOGICAL_INTERFACE}.proto=batadv
   uci set network.${LOGICAL_INTERFACE}.mesh=bat1
   uci set network.${LOGICAL_INTERFACE}.mtu=1528
-  uci set network.${LOGICAL_INTERFACE}.routing_algo='BATMAN_V'
+  uci set network.${LOGICAL_INTERFACE}.routing_algo='BATMAN_IV' ### BATMAN_V crashes the router
   uci commit network
 }
 
